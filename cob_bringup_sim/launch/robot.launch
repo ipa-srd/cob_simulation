@@ -13,6 +13,7 @@
 	<arg name="use_sim_time" default="true"/>
 	<arg name="gui" default="true"/>
 	<arg name="throttled" default="false"/>
+	<arg name="robot_id" default="/"/>
 
 	<!-- startup simulated world -->
 	<include file="$(find cob_gazebo_worlds)/launch/world.launch">
@@ -32,6 +33,7 @@
 		<arg name="pkg_robot_config" value="$(arg pkg_robot_config)" />
 		<arg name="paused" value="$(arg paused)" />
 		<arg name="initial_config" value="$(arg initial_config)"/>
+		<arg name="robot_id" value="$(arg robot_id)" />
 	</include>
 
 </launch>

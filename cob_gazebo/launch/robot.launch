@@ -7,23 +7,29 @@
 	<arg name="pkg_robot_config" default="$(find cob_default_robot_config)"/>
 	<arg name="paused" default="false"/>
 	<arg name="initial_config" default=""/>
+        <arg name="robot_id" default="/"/>
 
-	<!-- upload default configuration parameters -->
-	<include file="$(arg pkg_robot_config)/upload_param.launch">
-		<arg name="robot" value="$(arg robot)" />
-	</include>
+        <group ns="$(arg robot_id)">
+                <param name="tf_prefix" type="str" value="$(arg robot_id)" />
 
-	<!-- send robot urdf to param server -->
-	<include file="$(find cob_hardware_config)/common/upload_robot.launch" >
-		<arg name="robot" value="$(arg robot)" />
-	</include>
+                <!-- upload default configuration parameters -->
+                <include file="$(arg pkg_robot_config)/upload_param.launch">
+                        <arg name="robot" value="$(arg robot)" />
+                </include>
 
-	<!-- push robot_description to factory and spawn robot in gazebo -->
-	<node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -z 0.1 $(arg initial_config) -wait $(arg robot_env)" respawn="false" output="screen" />
+                <!-- send robot urdf to param server -->
+                <include file="$(find cob_hardware_config)/common/upload_robot.launch" >
+                        <arg name="robot" value="$(arg robot)" />
+                        <arg name="robot_id" value="$(arg robot_id)"/>
+                </include>
 
-	<!-- start gazebo controllers -->
-	<include file="$(find cob_controller_configuration_gazebo)/launch/robots/default_controllers_$(arg robot).launch" >
-		<arg name="robot" value="$(arg robot)" />
-	</include>
 
+		<!-- push robot_description to factory and spawn robot in gazebo -->
+		<node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model model_$(arg robot_id) -z 0.1 $(arg initial_config) -wait $(arg robot_env)" respawn="false" 			output="screen" />
+
+		<!-- start gazebo controllers -->
+		<include file="$(find cob_controller_configuration_gazebo)/launch/robots/default_controllers_$(arg robot).launch" >
+			<arg name="robot" value="$(arg robot)" />
+		</include>
+	</group>
 </launch>
